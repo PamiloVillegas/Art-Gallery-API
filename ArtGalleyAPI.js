@@ -24,7 +24,9 @@ async function obtenerObras() {
 
     //consumir API
 
-    const respuesta = await fetch(`https://api.artic.edu/api/v1/artworks`);
+    const respuesta = await fetch(
+      `https://api.artic.edu/api/v1/artworks?page=${paginaActual}`,
+    );
 
     //validar respuesta
 

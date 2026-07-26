@@ -11,34 +11,64 @@
   </head>
 
   <body class="bg-yellow-200 text-slate-100 min-h-screen font-serif">
-    <header class="bg-yellow-200 text-center p-8 border-b border-white">
-      <h1
-        class="text-5xl font-extrabold text-black uppercase pb-6 tracking-widest drop-shadow-lg"
-      >
-        Art Gallery API
-      </h1>
+    <header
+      class="bg-contain bg-center text-center p-8 border-b border-white relative"
+      style="background-image: url(&quot;Imagen Art Gallery.png&quot;)"
+    >
+      <!-- Capa oscura -->
 
-      <button
-        id="btnCargarObras"
-        class="bg-white hover:bg-yellow-300 text-black font-bold py-2 px-8 text-lg cursor-pointer transition-colors rounded"
-      >
-        Buscar Obras de Arte
-      </button>
+      <div
+        class="absolute inset-0 bg-gradient-to-l from-black/60 via-black/30 to-transparent"
+      ></div>
 
-      <h2>
-        <br />
-        <div class="flex justify-center gap-4 mb-6">
-          <button id="btnAnterior" class="bg-olive-400 px-2 py-1 rounded">
+      <!-- Contenido -->
+
+      <div class="relative z-10">
+        <h1
+          class="text-6xl font-extrabold text-white tracking-widest drop-shadow-2xl"
+        >
+          ART GALLERY API
+        </h1>
+
+        <button
+          id="btnCargarObras"
+          class="bg-zinc-300 hover:bg-zinc-400 text-black font-bold py-2 px-10 rounded-lg shadow-xl"
+        >
+          Obras
+        </button>
+
+        <button
+          id="btnCargarArtistas"
+          class="bg-zinc-300 hover:bg-zinc-400 text-black font-bold py-2 px-10 rounded-lg shadow-xl"
+        >
+          Artistas
+        </button>
+
+        <button
+          id="btnCargarLugares"
+          class="bg-zinc-300 hover:bg-zinc-400 text-black font-bold py-2 px-10 rounded-lg shadow-xl"
+        >
+          Lugares
+        </button>
+
+        <div class="flex justify-center gap-6 mt-10">
+          <button
+            id="btnAnterior"
+            class="bg-zinc-400 hover:bg-zinc-300 text-white px-5 py-2 rounded"
+          >
             Anterior
           </button>
 
-          <span id="pagina" class="text-xl font-bold"></span>
+          <span id="pagina" class="text-white text-2xl font-bold"> </span>
 
-          <button id="btnSiguiente" class="bg-olive-600 px-2 py-1 rounded">
+          <button
+            id="btnSiguiente"
+            class="bg-zinc-400 hover:bg-zinc-300 text-white px-5 py-2 rounded"
+          >
             Siguiente
           </button>
         </div>
-      </h2>
+      </div>
     </header>
 
     <main>
