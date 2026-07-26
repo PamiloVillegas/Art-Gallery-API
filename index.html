@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+    <title>Art Gallery API</title>
+  </head>
+
+  <body class="bg-yellow-200 text-slate-100 min-h-screen font-serif">
+    <header class="bg-yellow-200 text-center p-8 border-b border-white">
+      <h1
+        class="text-5xl font-extrabold text-black uppercase pb-6 tracking-widest drop-shadow-lg"
+      >
+        Art Gallery API
+      </h1>
+
+      <button
+        id="btnCargarObras"
+        class="bg-white hover:bg-yellow-300 text-black font-bold py-2 px-8 text-lg cursor-pointer transition-colors rounded"
+      >
+        Buscar Obras de Arte
+      </button>
+
+      <h2>
+        <br />
+        <div class="flex justify-center gap-4 mb-6">
+          <button id="btnAnterior" class="bg-olive-400 px-2 py-1 rounded">
+            Anterior
+          </button>
+
+          <span id="pagina" class="text-xl font-bold"></span>
+
+          <button id="btnSiguiente" class="bg-olive-600 px-2 py-1 rounded">
+            Siguiente
+          </button>
+        </div>
+      </h2>
+    </header>
+
+    <main>
+      <!-- Aquí aparecen las tarjetas -->
+
+      <div
+        id="obra-contenedor"
+        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 p-6"
+      ></div>
+
+      <!-- MODAL FLOTANTE -->
+
+      <div
+        id="modal"
+        class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50"
+      >
+        <div
+          class="bg-white border border-yellow-200 rounded-lg p-6 w-96 relative"
+        >
+          <!-- Botón cerrar -->
+
+          <button
+            id="btnCerrar"
+            class="absolute top-2 right-3 text-black text-2xl font-bold hover:text-red-500"
+          >
+            X
+          </button>
+
+          <!-- Aquí aparecen los detalles -->
+
+          <div id="detalle"></div>
+        </div>
+      </div>
+    </main>
+
+    <script src="ArtGalleryAPI.js"></script>
+  </body>
+</html>
