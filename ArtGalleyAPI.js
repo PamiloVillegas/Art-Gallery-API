@@ -12,6 +12,7 @@ const pagina = document.getElementById("pagina");
 //función para obtener obras de arte
 
 async function obtenerObras() {
+  console.log("Obteniendo obras de arte de la API...");
   try {
     //mensaje mientras carga
 
@@ -25,7 +26,7 @@ async function obtenerObras() {
     //consumir API
 
     const respuesta = await fetch(
-      `https://api.artic.edu/api/v1/artworks?page=${paginaActual}`,
+      `https://collectionapi.metmuseum.org/public/collection/v1/search?q=*&hasImages=true`,
     );
 
     //validar respuesta
@@ -37,40 +38,42 @@ async function obtenerObras() {
     //convertir respuesta a JSON
 
     const datos = await respuesta.json();
+    console.log("Datos recibidos correctamente:", datos);
     pagina.textContent = `Página ${paginaActual} de ${datos.pages}`;
 
-    //The Simpsons API utiliza results
+    // la API MET utiliza objectsIDs para identificar las obras de arte
 
-    const listaObras = datos.results;
+    const listaIDs = datos.objectIDs.slice(
+      (paginaActual - 1) * 20,
+      paginaActual * 20,
+    );
 
     //limpiar contenedor
 
     contenedor.innerHTML = "";
 
-    console.log("Datos recibidos correctamente:", listaObras);
+    //recorrer IDs
+    for (let i = 0; i < listaIDs.length; i++) {
+      const id = listaIDs[i];
+      const respuestaObra = await fetch(
+        `https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`,
+      );
 
-    //recorrer obras
-
-    for (let i = 0; i < listaObras.length; i++) {
-      const obra = listaObras[i];
+      const obra = await respuestaObra.json();
 
       //crear tarjeta
-
       const tarjeta = document.createElement("div");
 
       tarjeta.className =
         "bg-slate-800 border border-yellow-200 p-4 text-center rounded";
 
       //crear imagen
+      const imagen = document.createElement("img");
 
-      //const imagen = document.createElement("img");
+      imagen.src = `${obra.primaryImageSmall}`;
 
-      //imagen.src = `https://cdn.thesimpsonsapi.com/500${personaje.portrait_path}`;
-
-      //imagen.alt = personaje.name;
-
-      //imagen.className =
-      // "w-32 h-32 mx-auto cursor-pointer hover:scale-110 transition";
+      imagen.className =
+        "w-32 h-32 mx-auto cursor-pointer hover:scale-110 transition";
 
       //crear número
 
@@ -78,7 +81,7 @@ async function obtenerObras() {
 
       numero.className = "text-xs font-bold text-white block mt-2";
 
-      numero.textContent = `#${String(personaje.id).padStart(3, "0")}`;
+      numero.textContent = `#${String(obra.objectID)}`;
 
       //crear nombre
 
@@ -86,7 +89,7 @@ async function obtenerObras() {
 
       nombre.className = "text-xl font-bold text-white mt-1";
 
-      nombre.textContent = personaje.name;
+      nombre.textContent = obra.title;
 
       //agregar elementos a la tarjeta
 
@@ -94,12 +97,12 @@ async function obtenerObras() {
 
       tarjeta.appendChild(numero);
 
-      tarjeta.appendChild(autor);
+      tarjeta.appendChild(imagen);
 
       //click en la imagen para abrir el modal con detalles de la obra
 
       imagen.addEventListener("click", () => {
-        mostrarDetalle(personaje);
+        mostrarDetalle(obra);
       });
 
       //mostrar tarjeta
@@ -121,7 +124,7 @@ async function obtenerObras() {
 
 //Funcion para Modal
 
-function mostrarDetalle(personaje) {
+function mostrarDetalle(obra) {
   const modal = document.getElementById("modal");
 
   const detalle = document.getElementById("detalle");
@@ -129,13 +132,13 @@ function mostrarDetalle(personaje) {
   detalle.innerHTML = `
 
     <img
-    src="https://cdn.thesimpsonsapi.com/500${personaje.portrait_path}"
+    src="${obra.primaryImage}"
     class="w-48 h-48 mx-auto">
 
     <h2 class="text-3xl font-bold 
     text-center mt-4 text-red-500">
 
-      ${personaje.name}
+      ${obra.title}
 
     </h2>
 
@@ -143,32 +146,32 @@ function mostrarDetalle(personaje) {
 
       <p>
       <strong>ID:</strong> 
-      ${personaje.id}
+      ${obra.objectID}
       </p>
 
       <p>
-      <strong>Genero:</strong> 
-      ${personaje.gender}
+      <strong>Artista:</strong> 
+      ${obra.artistDisplayName || "Desconocido"}
       </p>
 
       <p>
-      <strong>Edad:</strong> 
-      ${personaje.age}
+      <strong>Origen:</strong> 
+      ${obra.artistNationality || "Desconocido"}
       </p>
 
       <p>
-      <strong>Ocupacion:</strong> 
-      ${personaje.occupation}
+      <strong>Año de la obra:</strong> 
+      ${obra.objectDate || "Desconocido"}
       </p>
 
       <p>
-      <strong>Frase:</strong> 
-      ${personaje.phrases[0]}
+      <strong>Area Gallery:</strong> 
+      ${obra.department || "Desconocido"}
       </p>
 
       <p>
-      <strong>Estado:</strong> 
-      ${personaje.status}
+      <strong>Tipo de obra:</strong> 
+      ${obra.classification || "Desconocido"}
       </p>
 
     </div>
