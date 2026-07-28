@@ -39,7 +39,7 @@ async function obtenerObras() {
 
     const datos = await respuesta.json();
     console.log("Datos recibidos correctamente:", datos);
-    pagina.textContent = `Página ${paginaActual} de ${datos.pages}`;
+    pagina.textContent = `Página ${paginaActual} de ${Math.ceil(datos.total / 20)}`;
 
     // la API MET utiliza objectsIDs para identificar las obras de arte
 
@@ -60,6 +60,11 @@ async function obtenerObras() {
       );
 
       const obra = await respuestaObra.json();
+
+      // Saltar a la siguiente iteración si no hay imagen
+      if (!obra.primaryImageSmall) {
+        continue;
+      }
 
       //crear tarjeta
       const tarjeta = document.createElement("div");
@@ -87,7 +92,7 @@ async function obtenerObras() {
 
       const nombre = document.createElement("h2");
 
-      nombre.className = "text-xl font-bold text-white mt-1";
+      nombre.className = "line-clamp-2 text-xl font-bold text-white mt-1";
 
       nombre.textContent = obra.title;
 
