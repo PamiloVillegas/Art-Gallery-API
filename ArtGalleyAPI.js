@@ -1,133 +1,200 @@
 //capturar elementos del DOM
 let paginaActual = 1;
 
-const btnCargarObras = document.getElementById("btnCargarObras");
+// URL de la búsqueda actual (se utilizará para la paginación y los filtros)
+let urlBusqueda =
+  "https://collectionapi.metmuseum.org/public/collection/v1/search?q=*&hasImages=true";
+
+// Texto del título que se está buscando
+let filtroTitulo = "";
+
+// Contenedor donde se mostrarán las tarjetas
 const contenedor = document.getElementById("obra-contenedor");
 
-//Botones paginacion
+// Botones paginación
 const btnAnterior = document.getElementById("btnAnterior");
 const btnSiguiente = document.getElementById("btnSiguiente");
 const pagina = document.getElementById("pagina");
 
-//función para obtener obras de arte
+// Obtiene el resultado de una búsqueda
+async function obtenerResultadoBusqueda(url) {
+  const respuesta = await fetch(url);
 
+  if (!respuesta.ok) {
+    throw new Error("El servidor no responde");
+  }
+
+  return await respuesta.json();
+}
+
+// Obtiene el detalle de las obras y las muestra en pantalla
+async function obtenerDetalleObras(listaIDs) {
+  // Limpiar el contenedor antes de comenzar
+  contenedor.innerHTML = "";
+
+  for (let i = 0; i < listaIDs.length; i++) {
+    const respuesta = await fetch(
+      `https://collectionapi.metmuseum.org/public/collection/v1/objects/${listaIDs[i]}`,
+    );
+
+    const obra = await respuesta.json();
+
+    if (!obra.primaryImageSmall) {
+      continue;
+    }
+
+    // Si existe un filtro por título,
+    // verificar que el título lo contenga.
+
+    if (filtroTitulo !== "") {
+      if (!obra.title.toLowerCase().includes(filtroTitulo)) {
+        continue;
+      }
+    }
+
+    mostrarObra(obra);
+  }
+}
+
+// Muestra una obra en pantalla
+function mostrarObra(obra) {
+  // Crear tarjeta
+  const tarjeta = document.createElement("div");
+
+  tarjeta.className =
+    "bg-slate-800 border border-yellow-200 p-4 text-center rounded";
+
+  // Imagen
+  const imagen = document.createElement("img");
+
+  imagen.src = obra.primaryImageSmall;
+
+  imagen.className =
+    "w-32 h-32 mx-auto cursor-pointer hover:scale-110 transition";
+
+  imagen.addEventListener("click", () => {
+    mostrarDetalle(obra);
+  });
+
+  // Número
+  const numero = document.createElement("span");
+
+  numero.className = "text-xs font-bold text-white block mt-2";
+
+  numero.textContent = "#" + obra.objectID;
+
+  // Nombre
+  const nombre = document.createElement("h2");
+
+  nombre.className = "line-clamp-2 text-xl font-bold text-white mt-1";
+
+  nombre.textContent = obra.title;
+
+  // Agregar elementos
+
+  tarjeta.appendChild(nombre);
+  tarjeta.appendChild(numero);
+  tarjeta.appendChild(imagen);
+
+  contenedor.appendChild(tarjeta);
+}
+
+// Cargar departamentos
+async function cargarDepartamentos() {
+  const respuesta = await fetch(
+    "https://collectionapi.metmuseum.org/public/collection/v1/departments",
+  );
+
+  const datos = await respuesta.json();
+
+  const select = document.getElementById("departamento");
+
+  for (let i = 0; i < datos.departments.length; i++) {
+    const departamento = datos.departments[i];
+
+    const option = document.createElement("option");
+
+    option.value = departamento.departmentId;
+
+    option.textContent = departamento.displayName;
+
+    select.appendChild(option);
+  }
+}
+
+// Buscar por departamento
+function buscarPorDepartamento() {
+  const departamento = document.getElementById("departamento").value;
+
+  paginaActual = 1;
+
+  // Limpiar el filtro por título
+  filtroTitulo = "";
+
+  // Limpiar el cuadro de texto
+  document.getElementById("titulo").value = "";
+
+  if (departamento === "") {
+    urlBusqueda =
+      "https://collectionapi.metmuseum.org/public/collection/v1/search?q=*&hasImages=true";
+  } else {
+    urlBusqueda = `https://collectionapi.metmuseum.org/public/collection/v1/search?q=*&hasImages=true&departmentId=${departamento}`;
+  }
+
+  obtenerObras();
+}
+
+// Buscar por título
+function buscarPorTitulo() {
+  const titulo = document.getElementById("titulo").value.trim();
+
+  paginaActual = 1;
+
+  filtroTitulo = titulo.toLowerCase();
+  if (titulo === "") {
+    urlBusqueda =
+      "https://collectionapi.metmuseum.org/public/collection/v1/search?q=*&hasImages=true";
+  } else {
+    urlBusqueda = `https://collectionapi.metmuseum.org/public/collection/v1/search?q=${encodeURIComponent(titulo)}&hasImages=true`;
+  }
+  // Restablecer el departamento
+  filtroTitulo = "";
+  document.getElementById("departamento").value = "";
+  obtenerObras();
+}
+
+// Obtiene las obras de arte
 async function obtenerObras() {
-  console.log("Obteniendo obras de arte de la API...");
   try {
-    //mensaje mientras carga
-
     contenedor.innerHTML = `
-      <p class="text-center col-span-full font-bold 
+      <p class="text-center col-span-full font-bold
       text-red-600 animate-pulse text-lg">
       Obteniendo Información de Obras de Arte...
       </p>
     `;
 
-    //consumir API
+    const datos = await obtenerResultadoBusqueda(urlBusqueda);
 
-    const respuesta = await fetch(
-      `https://collectionapi.metmuseum.org/public/collection/v1/search?q=*&hasImages=true`,
-    );
-
-    //validar respuesta
-
-    if (!respuesta.ok) {
-      throw new Error("El servidor no responde");
-    }
-
-    //convertir respuesta a JSON
-
-    const datos = await respuesta.json();
-    console.log("Datos recibidos correctamente:", datos);
     pagina.textContent = `Página ${paginaActual} de ${Math.ceil(datos.total / 20)}`;
-
-    // la API MET utiliza objectsIDs para identificar las obras de arte
 
     const listaIDs = datos.objectIDs.slice(
       (paginaActual - 1) * 20,
       paginaActual * 20,
     );
 
-    //limpiar contenedor
-
-    contenedor.innerHTML = "";
-
-    //recorrer IDs
-    for (let i = 0; i < listaIDs.length; i++) {
-      const id = listaIDs[i];
-      const respuestaObra = await fetch(
-        `https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`,
-      );
-
-      const obra = await respuestaObra.json();
-
-      // Saltar a la siguiente iteración si no hay imagen
-      if (!obra.primaryImageSmall) {
-        continue;
-      }
-
-      //crear tarjeta
-      const tarjeta = document.createElement("div");
-
-      tarjeta.className =
-        "bg-slate-800 border border-yellow-200 p-4 text-center rounded";
-
-      //crear imagen
-      const imagen = document.createElement("img");
-
-      imagen.src = `${obra.primaryImageSmall}`;
-
-      imagen.className =
-        "w-32 h-32 mx-auto cursor-pointer hover:scale-110 transition";
-
-      //crear número
-
-      const numero = document.createElement("span");
-
-      numero.className = "text-xs font-bold text-white block mt-2";
-
-      numero.textContent = `#${String(obra.objectID)}`;
-
-      //crear nombre
-
-      const nombre = document.createElement("h2");
-
-      nombre.className = "line-clamp-2 text-xl font-bold text-white mt-1";
-
-      nombre.textContent = obra.title;
-
-      //agregar elementos a la tarjeta
-
-      tarjeta.appendChild(nombre);
-
-      tarjeta.appendChild(numero);
-
-      tarjeta.appendChild(imagen);
-
-      //click en la imagen para abrir el modal con detalles de la obra
-
-      imagen.addEventListener("click", () => {
-        mostrarDetalle(obra);
-      });
-
-      //mostrar tarjeta
-
-      contenedor.appendChild(tarjeta);
-    }
+    await obtenerDetalleObras(listaIDs);
   } catch (error) {
-    contenedor.innerHTML = `
+    console.error(error);
 
+    contenedor.innerHTML = `
       <p class="text-red-600 font-bold">
       Error al cargar obras de arte
       </p>
-
     `;
-
-    console.error(error);
   }
 }
 
-//Funcion para Modal
+// Modal
 
 function mostrarDetalle(obra) {
   const modal = document.getElementById("modal");
@@ -137,58 +204,53 @@ function mostrarDetalle(obra) {
   detalle.innerHTML = `
 
     <img
-    src="${obra.primaryImage}"
-    class="w-48 h-48 mx-auto">
+      src="${obra.primaryImage}"
+      class="w-48 h-48 mx-auto">
 
-    <h2 class="text-3xl font-bold 
-    text-center mt-4 text-red-500">
-
+    <h2 class="text-3xl font-bold text-center mt-4 text-red-500">
       ${obra.title}
-
     </h2>
 
     <div class="mt-5 space-y-2 text-black">
 
       <p>
-      <strong>ID:</strong> 
-      ${obra.objectID}
+        <strong>ID:</strong>
+        ${obra.objectID}
       </p>
 
       <p>
-      <strong>Artista:</strong> 
-      ${obra.artistDisplayName || "Desconocido"}
+        <strong>Artista:</strong>
+        ${obra.artistDisplayName || "Desconocido"}
       </p>
 
       <p>
-      <strong>Origen:</strong> 
-      ${obra.artistNationality || "Desconocido"}
+        <strong>Origen:</strong>
+        ${obra.artistNationality || "Desconocido"}
       </p>
 
       <p>
-      <strong>Año de la obra:</strong> 
-      ${obra.objectDate || "Desconocido"}
+        <strong>Año de la obra:</strong>
+        ${obra.objectDate || "Desconocido"}
       </p>
 
       <p>
-      <strong>Area Gallery:</strong> 
-      ${obra.department || "Desconocido"}
+        <strong>Departamento:</strong>
+        ${obra.department || "Desconocido"}
       </p>
 
       <p>
-      <strong>Tipo de obra:</strong> 
-      ${obra.classification || "Desconocido"}
+        <strong>Clasificación:</strong>
+        ${obra.classification || "Desconocido"}
       </p>
 
     </div>
-  `;
 
-  //mostrar modal
+  `;
 
   modal.classList.remove("hidden");
 }
 
-//BOTÓN CERRAR MODAL
-
+// Cerrar modal
 const btnCerrar = document.getElementById("btnCerrar");
 
 const modal = document.getElementById("modal");
@@ -197,22 +259,35 @@ btnCerrar.addEventListener("click", () => {
   modal.classList.add("hidden");
 });
 
-//cerrar dando click al fondo oscuro
-
 modal.addEventListener("click", (e) => {
   if (e.target === modal) {
     modal.classList.add("hidden");
   }
 });
 
-//evento botón cargar
-
-btnCargarObras.addEventListener("click", obtenerObras);
+// Eventos de paginación
 btnSiguiente.addEventListener("click", () => {
   paginaActual++;
+
   obtenerObras();
 });
+
 btnAnterior.addEventListener("click", () => {
-  paginaActual--;
-  obtenerObras();
+  if (paginaActual > 1) {
+    paginaActual--;
+
+    obtenerObras();
+  }
 });
+
+// Cargar departamentos al inicio
+const selectDepartamento = document.getElementById("departamento");
+selectDepartamento.addEventListener("change", buscarPorDepartamento);
+
+// Buscar por título al presionar Buscar
+const btnBuscar = document.getElementById("btnBuscar");
+btnBuscar.addEventListener("click", buscarPorTitulo);
+
+// Inicio de la aplicación
+obtenerObras();
+cargarDepartamentos();
