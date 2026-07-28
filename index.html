@@ -57,7 +57,6 @@
           <label for="departamento" class="text-gray-400 block mb-1">
             Departamento
           </label>
-
           <select
             id="departamento"
             class="text-gray-300 w-full border rounded border-gray-300 px-3 py-2 placeholder-gray-300"
@@ -68,7 +67,6 @@
 
         <div class="w-96">
           <label for="titulo" class="text-gray-400 block mb-1"> Título </label>
-
           <input
             type="text"
             id="titulo"
@@ -79,6 +77,13 @@
 
         <button id="btnBuscar" class="bg-blue-600 text-white px-6 py-2 rounded">
           Buscar
+        </button>
+
+        <button
+          id="btnFavoritos"
+          class="bg-yellow-500 text-white px-4 py-2 rounded"
+        >
+          ⭐ Ver Favoritos
         </button>
       </div>
 
@@ -109,6 +114,13 @@
           <!-- Aquí aparecen los detalles -->
 
           <div id="detalle"></div>
+          <div class="text-center">
+            <img
+              id="btnFavorito"
+              src="estrella-vacia.png"
+              class="w-10 h-10 mx-auto cursor-pointer hover:scale-110 transition"
+            />
+          </div>
         </div>
       </div>
     </main>

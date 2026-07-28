@@ -8,6 +8,9 @@ let urlBusqueda =
 // Texto del título que se está buscando
 let filtroTitulo = "";
 
+// Obras marcadas como favoritas
+const favoritos = [];
+
 // Contenedor donde se mostrarán las tarjetas
 const contenedor = document.getElementById("obra-contenedor");
 
@@ -207,7 +210,7 @@ function mostrarDetalle(obra) {
       src="${obra.primaryImage}"
       class="w-48 h-48 mx-auto">
 
-    <h2 class="text-3xl font-bold text-center mt-4 text-red-500">
+    <h2 class="line-clamp-2 text-3xl font-bold text-center mt-4 text-red-500">
       ${obra.title}
     </h2>
 
@@ -246,7 +249,17 @@ function mostrarDetalle(obra) {
     </div>
 
   `;
+  const btnFavorito = document.getElementById("btnFavorito");
 
+  // Agregar o quitar de favoritos al presionar el botón
+  btnFavorito.addEventListener("click", () => {
+    cambiarFavorito(obra);
+    if (esFavorito(obra.objectID)) {
+      btnFavorito.src = "estrella-llena.png";
+    } else {
+      btnFavorito.src = "estrella-vacia.png";
+    }
+  });
   modal.classList.remove("hidden");
 }
 
@@ -264,6 +277,36 @@ modal.addEventListener("click", (e) => {
     modal.classList.add("hidden");
   }
 });
+
+// Agregar o quitar de favoritos
+function cambiarFavorito(obra) {
+  for (let i = 0; i < favoritos.length; i++) {
+    if (favoritos[i].objectID === obra.objectID) {
+      favoritos.splice(i, 1);
+      return;
+    }
+  }
+  favoritos.push(obra);
+}
+
+// Verifica si una obra es favorita
+function esFavorito(id) {
+  for (let i = 0; i < favoritos.length; i++) {
+    if (favoritos[i].objectID === id) {
+      return true;
+    }
+  }
+  return false;
+}
+
+// Muestra las obras favoritas
+function mostrarFavoritos() {
+  pagina.textContent = "Favoritos";
+  contenedor.innerHTML = "";
+  for (let i = 0; i < favoritos.length; i++) {
+    mostrarObra(favoritos[i]);
+  }
+}
 
 // Eventos de paginación
 btnSiguiente.addEventListener("click", () => {
@@ -287,6 +330,11 @@ selectDepartamento.addEventListener("change", buscarPorDepartamento);
 // Buscar por título al presionar Buscar
 const btnBuscar = document.getElementById("btnBuscar");
 btnBuscar.addEventListener("click", buscarPorTitulo);
+
+// Mostrar favoritos al presionar el botón
+document
+  .getElementById("btnFavoritos")
+  .addEventListener("click", mostrarFavoritos);
 
 // Inicio de la aplicación
 obtenerObras();
