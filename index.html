@@ -10,7 +10,7 @@
     <title>Art Gallery API</title>
   </head>
 
-  <body class="bg-yellow-200 text-slate-100 min-h-screen font-serif">
+  <body class="bg-amber-100 text-slate-100 min-h-screen font-serif">
     <header
       class="bg-contain bg-center text-center p-8 border-b border-white relative"
       style="background-image: url(&quot;Imagen Art Gallery.png&quot;)"
@@ -35,7 +35,7 @@
             id="btnAnterior"
             class="bg-zinc-400 hover:bg-zinc-300 text-white px-5 py-2 rounded"
           >
-            Anterior
+            << Anterior
           </button>
 
           <span id="pagina" class="text-white text-2xl font-bold"> </span>
@@ -44,7 +44,7 @@
             id="btnSiguiente"
             class="bg-zinc-400 hover:bg-zinc-300 text-white px-5 py-2 rounded"
           >
-            Siguiente
+            Siguiente >>
           </button>
         </div>
       </div>
@@ -52,36 +52,41 @@
 
     <main>
       <!-- Panel de busqueda -->
-      <div class="bg-white flex items-end gap-4 p-4">
+      <div class="bg-amber-200 border-white flex items-end gap-7 p-4">
         <div class="w-80">
-          <label for="departamento" class="text-gray-400 block mb-1">
+          <label for="departamento" class="font-bold text-gray-500 block mb-1">
             Departamento
           </label>
           <select
             id="departamento"
-            class="text-gray-300 w-full border rounded border-gray-300 px-3 py-2 placeholder-gray-300"
+            class="text-gray-400 w-full border rounded border-gray-300 px-3 py-2 placeholder-gray-400"
           >
             <option value="">Todos los departamentos</option>
           </select>
         </div>
 
         <div class="w-96">
-          <label for="titulo" class="text-gray-400 block mb-1"> Título </label>
+          <label for="titulo" class="font-bold text-gray-500 block mb-1">
+            Título
+          </label>
           <input
             type="text"
             id="titulo"
-            placeholder="Buscar por título..."
-            class="w-full border rounded border-gray-300 px-3 py-2 placeholder-gray-300"
+            placeholder="Buscar por título o parte del título..."
+            class="text-gray-500 w-full border rounded border-gray-300 px-3 py-2 placeholder-gray-400"
           />
         </div>
 
-        <button id="btnBuscar" class="bg-blue-600 text-white px-6 py-2 rounded">
-          Buscar
+        <button
+          id="btnBuscar"
+          class="bg-zinc-400 hover:bg-zinc-300 text-white px-7 py-2 rounded"
+        >
+          🔍 Buscar
         </button>
 
         <button
           id="btnFavoritos"
-          class="bg-yellow-500 text-white px-4 py-2 rounded"
+          class="bg-yellow-500 hover:bg-yellow-400 text-white px-6 py-2 rounded"
         >
           ⭐ Ver Favoritos
         </button>
@@ -90,7 +95,7 @@
       <!-- Aquí aparecen las tarjetas -->
       <div
         id="obra-contenedor"
-        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 p-6"
+        class="border-white grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 p-6"
       ></div>
 
       <!-- Modal flotante -->
@@ -99,14 +104,12 @@
         id="modal"
         class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50"
       >
-        <div
-          class="bg-white border border-yellow-200 rounded-lg p-6 w-96 relative"
-        >
+        <div class="bg-stone-200 border-stone-800 rounded-lg p-6 w-96 relative">
           <!-- Botón cerrar -->
 
           <button
             id="btnCerrar"
-            class="absolute top-2 right-3 text-black text-2xl font-bold hover:text-red-500"
+            class="absolute top-2 right-3 text-black text-2xl font-bold hover:text-red-400"
           >
             X
           </button>
@@ -118,7 +121,7 @@
             <img
               id="btnFavorito"
               src="estrella-vacia.png"
-              class="w-10 h-10 mx-auto cursor-pointer hover:scale-110 transition"
+              class="absolute top-2 left-3 w-10 h-10 mx-auto cursor-pointer hover:scale-110 transition"
             />
           </div>
         </div>

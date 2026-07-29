@@ -65,7 +65,7 @@ function mostrarObra(obra) {
   const tarjeta = document.createElement("div");
 
   tarjeta.className =
-    "bg-slate-800 border border-yellow-200 p-4 text-center rounded";
+    "bg-zinc-500 border border-stone-900 p-4 text-center rounded";
 
   // Imagen
   const imagen = document.createElement("img");
@@ -161,7 +161,6 @@ function buscarPorTitulo() {
     urlBusqueda = `https://collectionapi.metmuseum.org/public/collection/v1/search?q=${encodeURIComponent(titulo)}&hasImages=true`;
   }
   // Restablecer el departamento
-  filtroTitulo = "";
   document.getElementById("departamento").value = "";
   obtenerObras();
 }
@@ -210,11 +209,11 @@ function mostrarDetalle(obra) {
       src="${obra.primaryImage}"
       class="w-48 h-48 mx-auto">
 
-    <h2 class="line-clamp-2 text-3xl font-bold text-center mt-4 text-red-500">
+    <h2 class="text-2xl text-center mt-2 text-black">
       ${obra.title}
     </h2>
 
-    <div class="mt-5 space-y-2 text-black">
+    <div class="mt-5 text-black">
 
       <p>
         <strong>ID:</strong>
